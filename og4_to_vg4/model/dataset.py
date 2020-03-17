@@ -3,7 +3,7 @@
 # Script:       dataset.py
 # Description:  build G4_data_package class and provide interfaces
 #               useful for training and testing
-# Update date:  2020/1/2
+# Update date:  2020/3/17
 # Author:       Zhuofan Zhang 
 
 import pandas as pd
@@ -44,6 +44,11 @@ class G4_data_package:
         '''
         ug4_sample = self.ug4.sample(n=self.vg4.shape[0], random_state=random_state)
         all_dataset = pd.concat([self.vg4, ug4_sample])
+
+        if test_size == 0.0:
+            return all_dataset, None
+        elif test_size == 1.0:
+            return None, all_dataset
 
         return train_test_split(
                                     all_dataset, 

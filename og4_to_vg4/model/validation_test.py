@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Script:       validation_test.py
 # Description:  wrap the different validation and test-result visualization
-# Update date:  2019/12/30
+# Update date:  2020/3/17
 # Author:       Zhuofan Zhang
 
 from sklearn.model_selection import KFold, cross_val_score
@@ -10,6 +10,7 @@ from sklearn.metrics import accuracy_score
 from scipy import interp
 # Noted that 'plot_roc_curve' needs sklearn version >= 0.22
 from sklearn.metrics import auc, plot_roc_curve
+import joblib
 import numpy as np
 import matplotlib.pyplot as plt 
 
@@ -75,15 +76,18 @@ def ROC_plot(clf, X, y, ax, clf_name, n_splits=5, random_state=42, shuffle=True)
 
     return aucs, tprs
 
-def ROC_test_plot(clf_dict, X, y, X_test, y_test, res_pic):
+def ROC_test_plot(clf_dict, X, y, X_test, y_test, res_pic, load_files=None):
     mean_fpr = np.linspace(0, 1, 100)
     fig, ax = plt.subplots()
 
-    for (clf_name, clf) in clf_dict.items():
-        clf.fit(X, y)
+    for i, (clf_name, clf) in enumerate(clf_dict.items()):
+        if X is None and y is None:
+            clf = joblib.load(load_files[i])
+        else:
+            clf.fit(X, y)
         acc = accuracy_score(y_test, clf.predict(X_test))
         viz = plot_roc_curve(
-                               clf, X, y,
+                               clf, X_test, y_test,
                                name="{}: ACC={}".format(clf_name, acc),
                                alpha=0.6, lw=1, ax=ax
                             )
