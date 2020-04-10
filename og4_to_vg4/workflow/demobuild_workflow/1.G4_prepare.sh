@@ -1,7 +1,7 @@
 #!usr/bin/bash
 # Script: 	1.G4_prepare.sh
 # Description:	Remove 'chrM';Remove too-short entries;Extract UG4;
-# Usage:	bash 1.G4_prepare.sh ${outputdir} ${cutoff}
+# Usage:	bash 1.G4_prepare.sh ${VG4 file} ${outputdir} ${cutoff}
 # Author:	Zhuofan Zhang
 # Update date:	2020/3/16
 

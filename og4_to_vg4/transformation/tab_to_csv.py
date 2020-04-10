@@ -15,4 +15,6 @@ with open(args.i, 'r') as ifile:
         for i in range(3):
             ifile.readline()
         for line in ifile.readlines():
+            line = line.replace("nan", "0.0")
+            line = line.replace("\t", ",")
             ofile.write(line)
