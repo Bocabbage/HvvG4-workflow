@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Script:       main.py
 # Description:  MAIN function of the VG4-predictor
-# Update date:  2020/4/8
+# Update date:  2020/4/11
 # Author:       Zhuofan Zhang
 
 
@@ -13,8 +13,8 @@ import pandas as pd
 import numpy as np
 import argparse
 # Classifier modules
-# from xgboost import XGBClassifier
-from sklearn.svm import SVC
+from xgboost import XGBClassifier
+# from sklearn.svm import SVC
 
 # Arguments-Parsing
 parser = argparse.ArgumentParser()
@@ -30,26 +30,26 @@ args = parser.parse_args()
 RANDOM_STATE = args.seed
 
 # Set models
-# xgb_params = {
-#                 'seed':RANDOM_STATE,
-#                 'learning_rate':0.2,
-#                 'gamma':0.3,
-#                 'subsample':0.7,
-#                 'colsample_bytree':0.8,
-#                 'n_estimators':1000
-#               }
+xgb_params = {
+                'seed':RANDOM_STATE,
+                'learning_rate':0.2,
+                'gamma':0.3,
+                'subsample':0.7,
+                'colsample_bytree':0.8,
+                'n_estimators':1000
+              }
 
-# clf = XGBClassifier()
-# clf.set_params(**xgb_params)
-# clf = load(args.model)
-svc_params = {
-                'random_state':RANDOM_STATE,
-                'C':1.0,
-                'kernel':'rbf',
-             }
-clf = SVC()
-clf.set_params(**svc_params)
+clf = XGBClassifier()
+clf.set_params(**xgb_params)
 clf = joblib.load(args.model)
+# svc_params = {
+#                 'random_state':RANDOM_STATE,
+#                 'C':1.0,
+#                 'kernel':'rbf',
+#              }
+# clf = SVC()
+# clf.set_params(**svc_params)
+# clf = joblib.load(args.model)
 
 
 # Read G4-ATAC data

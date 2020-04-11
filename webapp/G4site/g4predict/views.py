@@ -4,8 +4,15 @@ from django.http import HttpResponse
 from django.core.files import File
 import subprocess
 import os
+import random
+import glob
 
-SAVED_FILES_DIR = './files/'
+SAVED_FILES_DIR = '/mnt/c/Programming/G4/G4_predict_project/webapp/G4site/files'
+UTILS_DIR = '/mnt/c/Programming/G4/G4_predict_project/og4_to_vg4/utils'
+TRANSFORM_DIR = '/mnt/c/Programming/G4/G4_predict_project/og4_to_vg4/transformation'
+WORKFLOW_DIR = '/mnt/c/Programming/G4/G4_predict_project/og4_to_vg4'
+WORKFLOW_SH = '/mnt/c/Programming/G4/G4_predict_project/og4_to_vg4/workflow/workflow.sh'
+
 
 def __render_home_template(request):
     '''render the home-page'''
@@ -50,24 +57,32 @@ def upload(request):
             for chunk in file.chunks():
                 dest.write(chunk)
 
+    taskPrefix = g4File.name.split('.')[0] + str(random.randint(0, 5000))
     # -------- ComputeCodeHere -------- #
     subprocess.run([
                      "bash", 
-                     "/mnt/c/Programming/G4/G4_predict_project/og4_to_vg4/workflow/workflow.sh",
+                     WORKFLOW_SH,
                      os.path.join(SAVED_FILES_DIR, g4File.name),
                      os.path.join(SAVED_FILES_DIR, atacFile.name),
+                     taskPrefix,
+                     UTILS_DIR,
+                     TRANSFORM_DIR,
+                     SAVED_FILES_DIR,
+                     WORKFLOW_DIR,
                    ])
     # --------------------------------- #
+    resultFilePath = os.path.join(SAVED_FILES_DIR, "{}_result.bed".format(taskPrefix))
 
-    # __render_home_template(request)
-
-    with open('/mnt/c/Programming/G4/G4_predict_project/webapp/G4site/files/result.bed', 'rb') as f:
+    with open(resultFilePath, 'rb') as f:
         resultFile = File(f)
         response = HttpResponse(
                                  resultFile.chunks(),
                                  content_type = 'APPLICATION/OCTET-STREAM'
                                )
         response['Content-Disposition'] = 'attachment; filename=result.bed'
-        response['Content-Length'] = os.path.getsize('./files/result.bed')
+        response['Content-Length'] = os.path.getsize(resultFilePath)
+
+    # Noted that the wildcard(*) can't be used directly without shell=True
+    subprocess.call('rm {}/{}_*'.format(SAVED_FILES_DIR, taskPrefix), shell=True)
 
     return response
