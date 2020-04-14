@@ -43,7 +43,7 @@ class G4_data_package:
             Noted that the random_state will also be used in sampling the negative-samples
         '''
         ug4_sample = self.ug4.sample(n=self.vg4.shape[0], random_state=random_state)
-        all_dataset = pd.concat([self.vg4, ug4_sample])
+        all_dataset = pd.concat([self.vg4, ug4_sample], axis=1, sort=False)
 
         if test_size == 0.0:
             return all_dataset, None

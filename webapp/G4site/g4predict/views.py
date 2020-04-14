@@ -7,11 +7,11 @@ import os
 import random
 import glob
 
-SAVED_FILES_DIR = '/mnt/c/Programming/G4/G4_predict_project/webapp/G4site/files'
-UTILS_DIR = '/mnt/c/Programming/G4/G4_predict_project/og4_to_vg4/utils'
-TRANSFORM_DIR = '/mnt/c/Programming/G4/G4_predict_project/og4_to_vg4/transformation'
-WORKFLOW_DIR = '/mnt/c/Programming/G4/G4_predict_project/og4_to_vg4'
-WORKFLOW_SH = '/mnt/c/Programming/G4/G4_predict_project/og4_to_vg4/workflow/workflow.sh'
+SAVED_FILES_DIR = './files'
+UTILS_DIR = '../../og4_to_vg4/utils'
+TRANSFORM_DIR = '../../og4_to_vg4/transformation'
+WORKFLOW_DIR = '../../og4_to_vg4'
+WORKFLOW_SH = '../../og4_to_vg4/workflow/workflow.sh'
 
 
 def __render_home_template(request):

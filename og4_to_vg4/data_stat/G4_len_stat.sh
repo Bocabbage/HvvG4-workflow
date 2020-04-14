@@ -1,7 +1,7 @@
 #!/bin/bash
-# Update date: 2019/12/13
-OG4=/mnt/disk5/zhangzf/raw_data/OG4_data/all_G4_union.bed
-VG4=/mnt/disk5/zhangzf/raw_data/VG4_GSE107690/GSE107690_K562_High_confidence_peaks.bed
+# Update date: 2020/4/13
+OG4=$1
+VG4=$2
 FILES=($OG4 $VG4)
 
 for file in ${FILES[@]}

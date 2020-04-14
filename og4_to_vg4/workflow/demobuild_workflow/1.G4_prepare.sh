@@ -6,13 +6,14 @@
 # Update date:	2020/3/16
 
 VG4=${1}
+OG4=${2}
 OUTDIR=${2}
 LENGTH=${3}
 #OVERLAP=${4}
 
 # Exist Files
 # VG4=/mnt/disk5/zhangzf/raw_data/VG4_GSE107690/GSE107690_K562_High_confidence_peaks.bed
-OG4=/mnt/disk5/zhangzf/raw_data/OG4_data/all_G4_union.sort.bed
+# OG4=/mnt/disk5/zhangzf/raw_data/OG4_data/all_G4_union.sort.bed
 
 # Ouput Files of this script
 VG4_PRO=${OUTDIR}/VG4_cutoff${LENGTH}.bed
