@@ -19,14 +19,14 @@ bash ${WORKFLOWDIR}/workflow/1.G4_prepare.sh ${g4File} ${FILEDIR}/${prefix}_preG
 bash ${WORKFLOWDIR}/workflow/2.ATAC_prepare.sh ${atacFile} 10 ${FILEDIR}/${prefix}_preATAC.bw ${UTILS_DIR} ${TRANSFORM_DIR} && \
 
 # 3.Compute Matrix
-bash ${WORKFLOWDIR}/workflow/3.Matrices_Compute.sh ${FILEDIR}/${prefix}_preG4.bed ${FILEDIR}/${prefix}_preATAC.bw 3000 300 ${FILEDIR}/${prefix}_matrix.tab && \
+bash ${WORKFLOWDIR}/workflow/3.Matrices_Compute.sh ${FILEDIR}/${prefix}_preG4.bed ${FILEDIR}/${prefix}_preATAC.bw 3000 300 ${FILEDIR}/${prefix}_forplot ${FILEDIR}/${prefix}_matrix.tab && \
 
 # 4.Transform TAB to CSV
 python ${TRANSFORM_DIR}/tab_to_csv.py -i ${FILEDIR}/${prefix}_matrix.tab -o ${FILEDIR}/${prefix}_matrix.csv
 
 # 5.Predict
 python ${WORKFLOWDIR}/model/main.py --g4 ${FILEDIR}/${prefix}_matrix.csv --g4bed ${FILEDIR}/${prefix}_preG4.bed \
-                                    --output ${FILEDIR}/${prefix}_result.bed
+                                    --output ${FILEDIR}/${prefix}_result.bed --model ${UTILS_DIR}/xgb.joblib
 
 rm $g4File
 rm $atacFile
