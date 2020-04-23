@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 # Script:       validation_test.py
 # Description:  wrap the different validation and test-result visualization
-# Update date:  2020/3/17
+# Update date:  2020/4/22
 # Author:       Zhuofan Zhang
 
 from sklearn.model_selection import KFold, cross_val_score
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, recall_score, precision_score
 from scipy import interp
 # Noted that 'plot_roc_curve' needs sklearn version >= 0.22
 from sklearn.metrics import auc, plot_roc_curve
@@ -40,10 +40,13 @@ def ROC_plot(clf, X, y, ax, clf_name, n_splits=5, random_state=42, shuffle=True)
     kf = KFold(n_splits=n_splits, random_state=random_state, shuffle=shuffle)
     for i, (train, test) in enumerate(kf.split(X, y)):
         clf.fit(X[train], y[train])
-        acc = accuracy_score(y[test], clf.predict(X[test]))
+        y_pred = clf.predict(X[test])
+        acc = accuracy_score(y[test], y_pred)
+        recall = recall_score(y[test], y_pred)
+        precision = precision_score(y[test], y_pred)
         viz = plot_roc_curve(
                              clf, X[test], y[test],
-                             name="ROC fold {}: ACC={}".format(i, acc),
+                             name="ROC fold {}: ACC={:3f},REC={:3f},PRE={:3f}".format(i, acc, recall, precision),
                              alpha=0.3, lw=1, ax=ax
                             )
         interp_tpr = interp(mean_fpr, viz.fpr, viz.tpr)
@@ -78,17 +81,21 @@ def ROC_plot(clf, X, y, ax, clf_name, n_splits=5, random_state=42, shuffle=True)
 
 def ROC_test_plot(clf_dict, X, y, X_test, y_test, res_pic, load_files=None):
     mean_fpr = np.linspace(0, 1, 100)
-    fig, ax = plt.subplots()
-
+    fig, ax = plt.subplots(figsize=(10,10))
+    # print(X_test.shape)
     for i, (clf_name, clf) in enumerate(clf_dict.items()):
         if X is None and y is None:
             clf = joblib.load(load_files[i])
         else:
             clf.fit(X, y)
-        acc = accuracy_score(y_test, clf.predict(X_test))
+        y_pred = clf.predict(X_test)
+        recall = recall_score(y_test, y_pred)
+        precision = precision_score(y_test, y_pred)
+        acc = accuracy_score(y_test, y_pred)
+
         viz = plot_roc_curve(
                                clf, X_test, y_test,
-                               name="{}: ACC={}".format(clf_name, acc),
+                               name="{}: ACC={:.3f},RECALL={:.3f},PRE={:3f}".format(clf_name, acc, recall, precision),
                                alpha=0.6, lw=1, ax=ax
                             )
 
