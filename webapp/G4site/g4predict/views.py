@@ -46,24 +46,37 @@ def download(request, filename):
 
 @require_POST
 def upload(request):
-    g4File = request.FILES.get("g4-filename", None)
-    atacFile = request.FILES.get("atac-filename", None)
-    if not g4File or not atacFile:
-        return __render_home_template(request)
+    # g4File = request.FILES.get("g4-filename", None)
+    atacFile = request.FILES.get("atac_filename", None)
+    bsFile = request.FILES.get("bs_filename", None)
+    option = request.POST.getlist("output_option")[0]
+    g4FileName = "g4seq_{}.bed".format(option)
 
-    for file in [g4File, atacFile]:
+    # if not g4File or not atacFile:
+    #     return __render_home_template(request)
+    if not atacFile:
+        return __render_home_template(request)
+    
+
+    for file in [bsFile, atacFile]:
         pathname = os.path.join(SAVED_FILES_DIR, file.name)
         with open(pathname, 'wb+') as dest:
             for chunk in file.chunks():
                 dest.write(chunk)
+    # atacPathname = os.path.join(SAVED_FILES_DIR, atacFile.name)
+    # with open(atacPathname, 'wb+') as dest:
+    #     for chunk in atacFile.chunks():
+    #         dest.write(chunk)
 
-    taskPrefix = g4File.name.split('.')[0] + str(random.randint(0, 5000))
+    taskPrefix = atacFile.name.split('.')[0] + str(random.randint(0, 5000))
     # -------- ComputeCodeHere -------- #
     subprocess.run([
                      "bash", 
                      WORKFLOW_SH,
-                     os.path.join(SAVED_FILES_DIR, g4File.name),
+                     # os.path.join(SAVED_FILES_DIR, g4File.name),
+                     os.path.join(SAVED_FILES_DIR, g4FileName),
                      os.path.join(SAVED_FILES_DIR, atacFile.name),
+                     os.path.join(SAVED_FILES_DIR, bsFile.name),
                      taskPrefix,
                      UTILS_DIR,
                      TRANSFORM_DIR,
