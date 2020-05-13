@@ -2,17 +2,18 @@
 # -*- coding: utf-8 -*-
 # Script:       validation_test.py
 # Description:  wrap the different validation and test-result visualization
-# Update date:  2020/4/22
+# Update date:  2020/5/8 (Add Precision-Recall Curve)
 # Author:       Zhuofan Zhang
 
 from sklearn.model_selection import KFold, cross_val_score
 from sklearn.metrics import accuracy_score, recall_score, precision_score
 from scipy import interp
 # Noted that 'plot_roc_curve' needs sklearn version >= 0.22
-from sklearn.metrics import auc, plot_roc_curve
+from sklearn.metrics import auc, plot_roc_curve, plot_precision_recall_curve
 import joblib
 import numpy as np
 import matplotlib.pyplot as plt 
+import os
 
 
 
@@ -79,9 +80,11 @@ def ROC_plot(clf, X, y, ax, clf_name, n_splits=5, random_state=42, shuffle=True)
 
     return aucs, tprs
 
-def ROC_test_plot(clf_dict, X, y, X_test, y_test, res_pic, load_files=None):
+
+def Val_Test_Results(clf_dict, X, y, X_test, y_test, res_pic, res_pr, resultdir,load_files=None):
     mean_fpr = np.linspace(0, 1, 100)
     fig, ax = plt.subplots(figsize=(10,10))
+    fig2,ax2 = plt.subplots(figsize=(10,10))
     # print(X_test.shape)
     for i, (clf_name, clf) in enumerate(clf_dict.items()):
         if X is None and y is None:
@@ -89,20 +92,43 @@ def ROC_test_plot(clf_dict, X, y, X_test, y_test, res_pic, load_files=None):
         else:
             clf.fit(X, y)
         y_pred = clf.predict(X_test)
+        
+        if resultdir:
+            y_pred_proba = clf.predict_proba(X_test)
+            with open(os.path.join(resultdir,"{}_y_pred.txt".format(clf_name)), 'w+') as ypredfile:
+                for Y in y_pred:
+                    ypredfile.write("{}\n".format(Y))
+
+            with open(os.path.join(resultdir,"{}_y_test.txt".format(clf_name)), 'w+') as ytestfile:
+                for Y in y_test:
+                    ytestfile.write("{}\n".format(Y))
+
+            with open(os.path.join(resultdir,"{}_y_pred_proba.txt".format(clf_name)), 'w+') as ypredprobafile:
+                for Y in y_pred_proba:
+                    ypredprobafile.write("{}\t{}\n".format(Y[0],Y[1]))
+
         recall = recall_score(y_test, y_pred)
         precision = precision_score(y_test, y_pred)
         acc = accuracy_score(y_test, y_pred)
 
+        if res_pr:
+            viz = plot_precision_recall_curve(clf, X_test, y_test,ax=ax)
+            
         viz = plot_roc_curve(
                                clf, X_test, y_test,
                                name="{}: ACC={:.3f},RECALL={:.3f},PRE={:3f}".format(clf_name, acc, recall, precision),
-                               alpha=0.6, lw=1, ax=ax
+                              alpha=0.6, lw=1, ax=ax2
                             )
 
-    ax.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',
-            label='Chance', alpha=0.8)
+    if res_pr:
+        ax.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',label='Chance', alpha=0.8)
+        ax.set(xlim=[-0.05, 1.05], ylim=[-0.05, 1.05], title="Precision-Recall Curve")
+        ax.legend(loc="lower right")
+        fig.savefig(res_pr) 
 
-    ax.set(xlim=[-0.05, 1.05], ylim=[-0.05, 1.05],
+    ax2.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',
+            label='Chance', alpha=0.8)
+    ax2.set(xlim=[-0.05, 1.05], ylim=[-0.05, 1.05],
            title="Receiver operating characteristic curve(Test-set)")
-    ax.legend(loc="lower right")
-    fig.savefig(res_pic)
+    ax2.legend(loc="lower right")
+    fig2.savefig(res_pic)
