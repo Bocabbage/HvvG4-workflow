@@ -30,26 +30,27 @@ def home(request):
 
     return __render_home_template(request)
 
-@require_GET
-def download(request, filename):
-    file_pathname = os.path.join(SAVED_FILES_DIR, filename)
+@require_POST
+def download(request):
+    downloadOption = request.POST.getlist("download_option")[0]
+    g4FileName = "g4seq_{}.bed".format(downloadOption)
+    file_pathname = os.path.join(SAVED_FILES_DIR, g4FileName)
     with open(file_pathname, 'rb') as f:
         file = File(f)
         response = HttpResponse(
                                  file.chunks(),
                                  content_type = 'APPLICATION/OCTET-STREAM'
                                )
-        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(g4FileName)
         response['Content-Length'] = os.path.getsize(file_pathname)
 
     return response
 
 @require_POST
 def upload(request):
-    # g4File = request.FILES.get("g4-filename", None)
+    option = request.POST.getlist("output_option")[0]
     atacFile = request.FILES.get("atac_filename", None)
     bsFile = request.FILES.get("bs_filename", None)
-    option = request.POST.getlist("output_option")[0]
     g4FileName = "g4seq_{}.bed".format(option)
 
     # if not g4File or not atacFile:

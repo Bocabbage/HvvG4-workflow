@@ -25,8 +25,6 @@ with open(args.iatac, 'r') as iatacFile:
 
             for atacLine in iatacFile.readlines():
                 bsLine = ibsFile.readline()
-                for line in [atacLine, bsLine]:
-                    line = line.replace("nan", "0.0")
-                    line = line.replace("\t", ",")
-                Line = atacLine + ',' + bsLine
+                Line = atacLine.strip().replace("nan", "0.0").replace("\t", ",") + \
+                       ',' + bsLine.strip().replace("nan", "0.0").replace("\t", ",") + "\n"
                 ofile.write(Line)
