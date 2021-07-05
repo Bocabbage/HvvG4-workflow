@@ -10,13 +10,14 @@ G4=$1
 ATAC=$2
 EXTEND=$3
 BINSIZE=$4
-OUTPUT=$5
+OUTFORPLOT=$5
+OUTPUT=$6
 
 # ComputeMatrix
-computeMatrix reference-point -S ${ATAC} -R ${G4} -p 6 \
+computeMatrix reference-point -S ${ATAC} -R ${G4} -p 10 \
 	      --referencePoint "center" \
 	      -a ${EXTEND} -b ${EXTEND} -bs ${BINSIZE} \
-	      --outFileName ${OUTDIR}/VG4_extend${EXTEND}_BS${BINSIZE}_forplot \
+	      --outFileName ${OUTFORPLOT} \
 	      --outFileNameMatrix ${OUTPUT}
 
 

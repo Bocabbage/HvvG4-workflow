@@ -6,6 +6,7 @@
 # Author:       Zhuofan Zhang
 
 
+from xgboost import XGBClassifier
 import matplotlib.pyplot as plt
 import joblib
 import os
@@ -13,7 +14,6 @@ import pandas as pd
 import numpy as np
 import argparse
 # Classifier modules
-from xgboost import XGBClassifier
 # from sklearn.svm import SVC
 
 # Arguments-Parsing

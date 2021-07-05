@@ -3,7 +3,7 @@
 # Script:       dataset.py
 # Description:  build G4_data_package class and provide interfaces
 #               useful for training and testing
-# Update date:  2020/3/17
+# Update date:  2020/5/12
 # Author:       Zhuofan Zhang 
 
 import pandas as pd
@@ -15,7 +15,7 @@ class G4_data_package:
     '''
         It's a class for easy processing the VG4/UG4 data.
     '''
-    def __init__(self, vg4_file, ug4_file, nvg4_file, nug4_file, mix): #, random_state=42):
+    def __init__(self, vg4_file, ug4_file): #, random_state=42):
         '''
             Initialized the object of G4_data_package, including:
             1.reads the features in csv into dataframes and stores
@@ -25,11 +25,11 @@ class G4_data_package:
         self.vg4 = pd.read_csv(vg4_file,dtype = 'a')
         self.ug4 = pd.read_csv(ug4_file,dtype = 'a')
 
-        if mix > 0:
-            self.nvg4 = pd.read_csv(nvg4_file, dtype= 'a')
-            self.nug4 = pd.read_csv(nug4_file, dtype= 'a')
-            self.vg4 = pd.concat([self.vg4, self.nvg4], axis=1, sort=False)
-            self.ug4 = pd.concat([self.ug4, self.nug4], axis=1, sort=False)
+        # if mix > 0:
+        #     self.nvg4 = pd.read_csv(nvg4_file, dtype= 'a')
+        #     self.nug4 = pd.read_csv(nug4_file, dtype= 'a')
+        #     self.vg4 = pd.concat([self.vg4, self.nvg4], axis=1, sort=False)
+        #     self.ug4 = pd.concat([self.ug4, self.nug4], axis=1, sort=False)
         # self.random_state = random_state
         # self.train_set_size = -1
 
@@ -42,9 +42,20 @@ class G4_data_package:
             Get train_test set used random-seed: random_state.
             Noted that the random_state will also be used in sampling the negative-samples
         '''
-        ug4_sample = self.ug4.sample(n=self.vg4.shape[0], random_state=random_state)
-        all_dataset = pd.concat([self.vg4, ug4_sample])
 
+        # Return all the data as the test_set
+        if test_size == "train":
+            all_dataset = pd.concat([self.vg4, self.ug4], sort=False)
+            return all_dataset, None
+
+        # Return all the data as the train_set
+        if test_size == "test":
+            all_dataset = pd.concat([self.vg4, self.ug4], sort=False)
+            return None, all_dataset
+
+        ug4_sample = self.ug4.sample(n=self.vg4.shape[0], random_state=random_state)
+        all_dataset = pd.concat([self.vg4, ug4_sample], sort=False)
+        # Return balanced dataset
         if test_size == 0.0:
             return all_dataset, None
         elif test_size == 1.0:
@@ -108,23 +119,6 @@ class G4_data_package:
     #                               ).sample(n=testset_size - testset_size//2, random_state=test_random_state)
 
     #     return pd.concat([vg4_sample, ug4_sample])
-
-class g4_dataset(Dataset):
-    '''
-        inherit from torch.utils.data.Dataset .
-        input: samples (numpy_ndarray of features)
-               labels  (sequential list of labels)
-        Noted that the two inputs' length must be consistent.
-    '''
-    def __init__(self, samples, labels):
-        self.samples = samples
-        self.labels = labels
-    def __getitem__(self, index):
-        features = self.samples[index]
-        label = self.labels[index]
-        return features, label
-    def __len__(self):
-        return len(self.labels)
 
 
 def test_main():

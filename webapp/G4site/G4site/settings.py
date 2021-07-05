@@ -25,7 +25,7 @@ SECRET_KEY = 'rinr#(_dwz)a-f0+q*!_*795k8j7d&a)c76j#x9b=q5&rq-vgm'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*' ]
 
 
 # Application definition

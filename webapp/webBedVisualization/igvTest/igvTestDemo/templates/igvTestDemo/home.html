@@ -1,0 +1,45 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <title>G4 Predict System</title>
+
+    {% load static %}
+
+    <!-- IGV.js load -->
+    <script src="https://cdn.jsdelivr.net/npm/igv@2.7.9/dist/igv.min.js"></script>
+
+  </head>
+
+
+<body>
+    <div id="igv-div">
+        {% csrf_token %}
+    </div>
+
+    
+    <script>
+        var igvDiv = document.getElementById("igv-div");
+        var options =
+        {
+            genome: "hg19",
+            tracks: [
+                {
+                    name: "G4seq",
+                    type: "annotation",
+                    format: "bed",
+                    sourceType: "file",
+                    // url: "data:application/gzip;base64,H4sIAM1FfWAC/zXNIRrAIAyDUc1Ok5C20PPMTO/+Yv2AmV88kdzPyyYfiaYAcN0L0uTV0AGD96hGcoPDmNWgHaB3VefUhqHp3oYBfsCg1X+jThFVkh9bBMYfhwAAAA==",
+                    url: "{% static 'igvTestDemo/testG4File.bed' %}",
+                    displayMode: "EXPANDED"
+                }
+            ]
+        };
+
+        igv.createBrowser(igvDiv, options)
+                .then(function (browser) {
+                    console.log("Created IGV browser");
+                })
+    </script>
+</body>
