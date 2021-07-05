@@ -11,12 +11,7 @@ ATAC_BDG=${1}
 #OUTDIR=${3}
 OUTPUT=${2}
 UTILS_DIR=${3}
-<<<<<<< HEAD
 # TMPSPACE=${4}
-=======
-#TRANSFORM_DIR=${5}
-# CELLTYPE=${4}
->>>>>>> 949f29a2d018c0767e51d401d17ef0ed69c1ebb7
 
 # Exist File(s)
 # ATAC_BDG=/mnt/disk5/zhangzf/raw_data/ATAC-seq/K562_ATAC_peak.sorted.bdg
@@ -33,11 +28,7 @@ HG19_CS=${UTILS_DIR}/hg19.chrom.sizes
 # trans_script=${TRANSFORM_DIR}/bedgraph_to_wig.pl
 bedGraphToBigWig=${UTILS_DIR}/bedGraphToBigWig
 
-<<<<<<< HEAD
 sort -k1,1 -k2,2n ${ATAC_BDG} -T /mnt/disk8/zhangzf/ > atac.sorted.bed
-=======
-sort -k1,1 -k2,2n ${ATAC_BDG} > atac.sorted.bed
->>>>>>> 949f29a2d018c0767e51d401d17ef0ed69c1ebb7
 awk -f ${UTILS_DIR}/atac.dedup.awk atac.sorted.bed > atac.sorted.dedup.bed
 $bedGraphToBigWig atac.sorted.dedup.bed ${HG19_CS} ${OUTPUT}
 # perl -w ${trans_script} ${STEP} atac.sorted.bed > tempwig.wig && \

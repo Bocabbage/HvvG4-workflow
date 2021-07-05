@@ -22,7 +22,8 @@ def __render_home_template(request):
     files = os.listdir(SAVED_FILES_DIR)
     return render(request, 'g4predict/home.html', {'files': files})
 
-''' 
+
+r'''
     The decorator [require_GET] is to require that a view
     only accepts the GET method.
 '''
@@ -33,6 +34,7 @@ def home(request):
 
     return __render_home_template(request)
 
+
 @require_POST
 def download(request):
     downloadOption = request.POST.getlist("download_option")[0]
@@ -42,12 +44,13 @@ def download(request):
         file = File(f)
         response = HttpResponse(
                                  file.chunks(),
-                                 content_type = 'APPLICATION/OCTET-STREAM'
+                                 content_type='APPLICATION/OCTET-STREAM'
                                )
         response['Content-Disposition'] = 'attachment; filename={}'.format(g4FileName)
         response['Content-Length'] = os.path.getsize(file_pathname)
 
     return response
+
 
 @require_GET
 def result_file_download(request, random_num):
@@ -56,13 +59,12 @@ def result_file_download(request, random_num):
     resultFilePath = os.path.join(SAVED_FILES_DIR, resultFileName)
     with open(resultFilePath, 'rb') as f:
         file = File(f)
-        response = HttpResponse(
-                                 file.chunks(),
-                                 content_type = 'APPLICATION/OCTET-STREAM'
-                               )
+        response = HttpResponse(file.chunks(),
+                                content_type='APPLICATION/OCTET-STREAM')
         response['Content-Disposition'] = 'attachment; filename={}'.format(resultFileName)
         response['Content-Length'] = os.path.getsize(resultFilePath)
     return response
+
 
 @require_POST
 def upload(request):
@@ -75,7 +77,6 @@ def upload(request):
     #     return __render_home_template(request)
     if not atacFile:
         return __render_home_template(request)
-    
 
     for file in [bsFile, atacFile]:
         pathname = os.path.join(SAVED_FILES_DIR, file.name)
@@ -103,32 +104,27 @@ def upload(request):
                      WORKFLOW_DIR,
                    ])
     # --------------------------------- #
-    resultFilePath = os.path.join(SAVED_FILES_DIR, "{}_result.bed".format(taskPrefix))
 
-    # with open(resultFilePath, 'rb') as f:
-    #     resultFile = File(f)
-    #     response = HttpResponse(
-    #                              resultFile.chunks(),
-    #                              content_type = 'APPLICATION/OCTET-STREAM'
-    #                            )
-    #     response['Content-Disposition'] = 'attachment; filename=result.bed'
-    #     response['Content-Length'] = os.path.getsize(resultFilePath)
-
-    # # Noted that the wildcard(*) can't be used directly without shell=True
+    # Noted that the wildcard(*) can't be used directly without shell=True
     subprocess.call('mv {fileDir}/{taskPrefix}_result.bed {fileDir}/{randomNum}_result.bed'.format(
-                    fileDir=SAVED_FILES_DIR, 
-                    taskPrefix=taskPrefix, 
+                    fileDir=SAVED_FILES_DIR,
+                    taskPrefix=taskPrefix,
                     randomNum=randomSeed),
                     shell=True)
-    subprocess.call('rm {fileDir}/{taskPrefix}_*'.format(fileDir=SAVED_FILES_DIR, taskPrefix=taskPrefix), shell=True)
+    subprocess.call('rm {fileDir}/{taskPrefix}_*'.format(
+                    fileDir=SAVED_FILES_DIR,
+                    taskPrefix=taskPrefix),
+                    shell=True)
 
     response_data = {}
     sockObj = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sockObj.connect(('8.8.8.8', 80))
     host_ip = sockObj.getsockname()[0]
     host_port = request.META['SERVER_PORT']
-    # response_data['result'] = "http://{}:{}/".format(host_ip, host_port) + resultFilePath[(resultFilePath.find('static')):]
-    response_data['result'] = "http://{host_ip}:{host_port}/g4predict/result_file_download/{rand_seed}".format(
+
+    response_data['result'] = ("http://{host_ip}:{host_port}/"
+                               "g4predict/result_file_download/"
+                               "{rand_seed}").format(
         host_ip=host_ip,
         host_port=host_port,
         rand_seed=randomSeed,
