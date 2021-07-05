@@ -4,7 +4,7 @@
 # Description:  build G4_data_package class and provide interfaces
 #               useful for training and testing
 # Update date:  2020/5/12
-# Author:       Zhuofan Zhang 
+# Author:       Zhuofan Zhang
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -12,35 +12,31 @@ from torch.utils.data import Dataset
 
 
 class G4_data_package:
-    '''
+    r'''
         It's a class for easy processing the VG4/UG4 data.
     '''
-    def __init__(self, vg4_file, ug4_file): #, random_state=42):
-        '''
+    def __init__(self, vg4_file, ug4_file):  # , random_state=42):
+        r'''
             Initialized the object of G4_data_package, including:
             1.reads the features in csv into dataframes and stores
             2.add labels at the last column of each dataframes
 
         '''
-        self.vg4 = pd.read_csv(vg4_file,dtype = 'a')
-        self.ug4 = pd.read_csv(ug4_file,dtype = 'a')
-
-        # if mix > 0:
-        #     self.nvg4 = pd.read_csv(nvg4_file, dtype= 'a')
-        #     self.nug4 = pd.read_csv(nug4_file, dtype= 'a')
-        #     self.vg4 = pd.concat([self.vg4, self.nvg4], axis=1, sort=False)
-        #     self.ug4 = pd.concat([self.ug4, self.nug4], axis=1, sort=False)
-        # self.random_state = random_state
-        # self.train_set_size = -1
+        self.vg4 = pd.read_csv(vg4_file, dtype='a')
+        self.ug4 = pd.read_csv(ug4_file, dtype='a')
 
         # Add labels
         self.vg4['Label'] = 1
         self.ug4['Label'] = 0
 
-    def get_train_test_set(self, test_size=0.25, random_state=42, shuffle=True):
-        '''
+    def get_train_test_set(self,
+                           test_size=0.25,
+                           random_state=42,
+                           shuffle=True):
+        r'''
             Get train_test set used random-seed: random_state.
-            Noted that the random_state will also be used in sampling the negative-samples
+            Noted that the random_state will also be used in
+            sampling the negative-samples
         '''
 
         # Return all the data as the test_set
@@ -53,8 +49,10 @@ class G4_data_package:
             all_dataset = pd.concat([self.vg4, self.ug4], sort=False)
             return None, all_dataset
 
-        ug4_sample = self.ug4.sample(n=self.vg4.shape[0], random_state=random_state)
+        ug4_sample = self.ug4.sample(n=self.vg4.shape[0],
+                                     random_state=random_state)
         all_dataset = pd.concat([self.vg4, ug4_sample], sort=False)
+
         # Return balanced dataset
         if test_size == 0.0:
             return all_dataset, None
@@ -62,63 +60,11 @@ class G4_data_package:
             return None, all_dataset
 
         return train_test_split(
-                                    all_dataset, 
-                                    test_size=test_size, 
-                                    random_state=random_state, 
-                                    shuffle=True
+                                    all_dataset,
+                                    test_size=test_size,
+                                    random_state=random_state,
+                                    shuffle=shuffle
                                )
-
-
-    # Old API: not used any more
-    # def get_training_set(self, trainset_size, random_state=42, shuffle=True):
-    #     '''
-    #         Get training-set of 'trainset_size', which includes
-    #         same sample_nums of VG4 and UG4. If random_state != self.random_state,
-    #         the new one will replaced the former one, recording for 'getting_testing_set'.
-    #     '''
-    #     self.random_state = random_state
-    #     self.train_set_size = trainset_size
-
-    #     if trainset_size//2 > self.vg4.shape[0] or trainset_size//2 > self.ug4.shape[0]:
-    #         print("trainset_size too large! Only return None!")
-    #         return None
-
-    #     vg4_sample = self.vg4.sample(n=trainset_size//2, random_state=self.random_state)
-    #     ug4_sample = self.ug4.sample(n=trainset_size - trainset_size//2, random_state=self.random_state)
-
-    #     training_set = pd.concat([vg4_sample, ug4_sample])
-    #     if shuffle:
-    #         training_set = training_set.sample(frac=1, random_state=self.random_state)
-    #     return training_set
-
-
-    # Old API: not used any more
-    # def get_test_set(self, testset_size, test_random_state=42):
-    #     '''
-    #         Get test-set of 'testset_size', which samples excluding the 
-    #         training-set(this is implemented by using 'self.random_state', which would be
-    #         update when using 'get_training_set') using random_state 'test_random_state'.
-    #         If there are no enough samples, the function returns 'None'.
-    #     '''
-    #     if self.train_set_size == -1:
-    #         print("You must get the training_set first.")
-    #         return None
-    #     if (testset_size//2 > (self.vg4.shape[0] - self.train_set_size//2) or
-    #         testset_size - testset_size//2 > (self.ug4.shape[0] - self.train_set_size + self.train_set_size//2)):
-    #         print("No enough test samples.")
-    #         return None
-    #     vg4_sample = self.vg4.drop(
-    #                                 index=self.vg4.sample(
-    #                                 n=self.train_set_size//2,
-    #                                 random_state = self.random_state).index
-    #                               ).sample(n=testset_size//2, random_state=test_random_state)
-    #     ug4_sample = self.ug4.drop(
-    #                                 index=self.ug4.sample(
-    #                                 n=self.train_set_size - self.train_set_size//2,
-    #                                 random_state = self.random_state).index
-    #                               ).sample(n=testset_size - testset_size//2, random_state=test_random_state)
-
-    #     return pd.concat([vg4_sample, ug4_sample])
 
 
 def test_main():
@@ -131,11 +77,11 @@ def test_main():
 
     # g4_train = test_G4.get_training_set(train_size)
     # g4_test = test_G4.get_test_set(test_size)
-    print("train size:{0} \t test size:{1}".format(g4_train.shape[0],g4_test.shape[0]))
+    print("train size:{0} \t test size:{1}".format(g4_train.shape[0],
+                                                   g4_test.shape[0]))
     print("train.head:")
     print(g4_train.head(5))
 
+
 if __name__ == '__main__':
     test_main()
-
-
