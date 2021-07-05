@@ -42,10 +42,8 @@ def download(request):
     file_pathname = os.path.join(SAVED_FILES_DIR, g4FileName)
     with open(file_pathname, 'rb') as f:
         file = File(f)
-        response = HttpResponse(
-                                 file.chunks(),
-                                 content_type='APPLICATION/OCTET-STREAM'
-                               )
+        response = HttpResponse(file.chunks(),
+                                content_type='APPLICATION/OCTET-STREAM')
         response['Content-Disposition'] = 'attachment; filename={}'.format(g4FileName)
         response['Content-Length'] = os.path.getsize(file_pathname)
 
@@ -90,19 +88,17 @@ def upload(request):
     randomSeed = str(random.randint(0, 5000))
     taskPrefix = atacFile.name.split('.')[0] + randomSeed
     # -------- ComputeCodeHere -------- #
-    subprocess.run([
-                     "bash", 
-                     WORKFLOW_SH,
-                     # os.path.join(SAVED_FILES_DIR, g4File.name),
-                     os.path.join(STATIC_FILES_DIR, g4FileName),
-                     os.path.join(SAVED_FILES_DIR, atacFile.name),
-                     os.path.join(SAVED_FILES_DIR, bsFile.name),
-                     taskPrefix,
-                     UTILS_DIR,
-                     TRANSFORM_DIR,
-                     SAVED_FILES_DIR,
-                     WORKFLOW_DIR,
-                   ])
+    subprocess.run(["bash",
+                    WORKFLOW_SH,
+                    # os.path.join(SAVED_FILES_DIR, g4File.name),
+                    os.path.join(STATIC_FILES_DIR, g4FileName),
+                    os.path.join(SAVED_FILES_DIR, atacFile.name),
+                    os.path.join(SAVED_FILES_DIR, bsFile.name),
+                    taskPrefix,
+                    UTILS_DIR,
+                    TRANSFORM_DIR,
+                    SAVED_FILES_DIR,
+                    WORKFLOW_DIR])
     # --------------------------------- #
 
     # Noted that the wildcard(*) can't be used directly without shell=True
