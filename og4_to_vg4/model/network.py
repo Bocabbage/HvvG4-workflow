@@ -48,7 +48,7 @@ class LSTM_RNN(nn.Module):
 
 
 class Net_clf:
-    def __init__(self, net, input_len, lr=0.001, epoch):
+    def __init__(self, net, input_len, lr=0.001, epoch=10):
         self.net = net(input_len)
         self.epoch = epoch
         self.criterion = nn.CrossEntropyLoss()

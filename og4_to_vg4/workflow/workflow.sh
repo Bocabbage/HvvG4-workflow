@@ -41,6 +41,7 @@ python ${TRANSFORM_DIR}/tab2csv_concat.py --iatac ${FILEDIR}/${prefix}_atac_matr
 # 5.Predict
 python ${WORKFLOWDIR}/model/main.py --g4 ${FILEDIR}/${prefix}_matrix.csv --g4bed ${FILEDIR}/${prefix}_sub_g4File.bed \
                                     --output ${FILEDIR}/${prefix}_result.temp.bed --model ${UTILS_DIR}/xgb.joblib
+<<<<<<< HEAD
 
 awk 'BEGIN{OFS="\t"}{if($NF==1){$NF="";print $0}}' ${FILEDIR}/${prefix}_result.temp.bed | \
 sed 's/:$//g' > ${FILEDIR}/${prefix}_result.bed
@@ -48,3 +49,12 @@ sed 's/:$//g' > ${FILEDIR}/${prefix}_result.bed
 # rm $g4File
 rm $atacFile
 rm $bsFile
+=======
+awk 'BEGIN{OFS="\t"}{if($NF==1){$NF="";print $0}}' ${FILEDIR}/${prefix}_result.temp.bed | \
+sed 's/:$//g' > ${FILEDIR}/${prefix}_result.bed
+mv ${FILEDIR}/${prefix}_result.temp.bed ${FILEDIR}/${prefix}_result.bed
+
+# rm $g4File
+rm $atacFile
+rm $bsFile
+>>>>>>> 949f29a2d018c0767e51d401d17ef0ed69c1ebb7
