@@ -3,3 +3,4 @@ files/
 __pycache__/
 /og4_to_vg4/utils/
 /og4_to_vg4/data_stat/
+/webapp/G4site/g4predict/results/
