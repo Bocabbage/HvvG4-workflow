@@ -7,13 +7,8 @@
 
 VG4=${1}
 OG4=${2}
-<<<<<<< HEAD
 OUTDIR=${3}
 LENGTH=${4}
-=======
-OUTDIR=${2}
-LENGTH=${3}
->>>>>>> 949f29a2d018c0767e51d401d17ef0ed69c1ebb7
 #OVERLAP=${4}
 
 # Exist Files
